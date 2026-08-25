@@ -41,6 +41,7 @@ export interface Vessel {
   course: number
   timestamp: string
   riskScore?: number // Calculated by backend
+  distanceToSpill?: number
 }
 
 export interface TrajectoryPoint {

@@ -9,8 +9,19 @@ export default async function VesselsPage({
 }: {
   searchParams: { incidentId?: string }
 }) {
-  const incidentId = searchParams.incidentId || "Awaiting Incident"
-  const vesselsRes = searchParams.incidentId ? await api.vessels.getNearby(incidentId) : null
+  let incidentId = searchParams.incidentId
+  
+  // Auto-select latest incident if none provided
+  if (!incidentId) {
+    const incidentsRes = await api.incidents.getAll()
+    if (incidentsRes && !('error' in incidentsRes) && incidentsRes.length > 0) {
+      incidentId = incidentsRes[0].id
+    } else {
+      incidentId = "Awaiting Incident"
+    }
+  }
+  
+  const vesselsRes = incidentId !== "Awaiting Incident" ? await api.vessels.getNearby(incidentId) : null
   
   const isOffline = vesselsRes && 'error' in vesselsRes
   const vessels: Vessel[] = !isOffline && vesselsRes && Array.isArray(vesselsRes) ? vesselsRes : []
@@ -67,7 +78,7 @@ export default async function VesselsPage({
                           <p className="text-xs text-muted-foreground">{vessel.mmsi}</p>
                         </td>
                         <td className="px-4 py-3">{vessel.type}</td>
-                        <td className="px-4 py-3">N/A</td>
+                        <td className="px-4 py-3">{vessel.distanceToSpill !== undefined ? `${vessel.distanceToSpill} km` : 'N/A'}</td>
                         <td className="px-4 py-3 text-muted-foreground">
                            {new Date(vessel.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                         </td>

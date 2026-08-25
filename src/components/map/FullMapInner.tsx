@@ -42,14 +42,19 @@ export default function FullMapInner({ incidents, vessels, trajectory }: FullMap
     return <div className="h-full w-full bg-secondary flex items-center justify-center text-muted-foreground animate-pulse">Loading map environment...</div>
   }
 
-  const center = { lat: 15.42, lng: 67.83 }
+  const activeIncident = incidents.length > 0 ? incidents[0] : null
+  const center = { 
+    lat: activeIncident?.location?.lat || 15.42, 
+    lng: activeIncident?.location?.lon || 67.83 
+  }
   const trajectoryPositions: [number, number][] = trajectory.map(t => [t.coordinates.lat, t.coordinates.lon])
 
   return (
     <div className="relative h-full w-full rounded-xl overflow-hidden border border-border">
       <MapContainer 
+        key={`${center.lat}-${center.lng}`} // Force re-render when center changes
         center={[center.lat, center.lng]} 
-        zoom={7} 
+        zoom={9} 
         className="h-full w-full z-0"
         zoomControl={true}
       >
@@ -94,7 +99,8 @@ export default function FullMapInner({ incidents, vessels, trajectory }: FullMap
             <Popup className="text-foreground">
               <div className="font-semibold text-primary">{vessel.name}</div>
               <div className="text-xs text-muted-foreground mb-1">MMSI: {vessel.mmsi}</div>
-              <div className="text-xs">{vessel.type}</div>
+              <div className="text-xs font-semibold">{vessel.type}</div>
+              <div className="text-xs mt-1 text-muted-foreground">Speed: {vessel.speed} kn | Heading: {vessel.heading}°</div>
               <div className="text-xs mt-1">Risk Score: <strong>{vessel.riskScore}%</strong></div>
             </Popup>
           </Marker>

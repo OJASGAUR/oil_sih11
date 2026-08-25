@@ -10,15 +10,8 @@ export function Header() {
       
       <div className="flex flex-1 items-center justify-between">
         <div className="flex items-center gap-4">
-          <Badge variant="ai" className="gap-1 px-3 py-1 text-xs">
-            <ShieldAlert size={12} />
-            DEMO MODE
-          </Badge>
-          <div className="hidden lg:block text-sm text-muted-foreground">
-            Operational Area: Arabian Sea / Gulf of Oman
-          </div>
+          {/* Header left area cleared per request */}
         </div>
-        
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm">
             <div className="h-2 w-2 rounded-full bg-safe"></div>
