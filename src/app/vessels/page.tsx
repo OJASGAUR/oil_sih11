@@ -7,9 +7,10 @@ import { Vessel } from "@/data/types"
 export default async function VesselsPage({
   searchParams,
 }: {
-  searchParams: { incidentId?: string }
+  searchParams: Promise<{ incidentId?: string }>
 }) {
-  let incidentId = searchParams.incidentId
+  const resolvedSearchParams = await searchParams
+  let incidentId = resolvedSearchParams.incidentId
   
   // Auto-select latest incident if none provided
   if (!incidentId) {
@@ -95,7 +96,7 @@ export default async function VesselsPage({
                     {sortedVessels.length === 0 && (
                        <tr>
                          <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                           {isOffline ? "Awaiting data — Pipeline offline" : !searchParams.incidentId ? "Select an incident to view correlated vessels." : "No vessels found."}
+                           {isOffline ? "Awaiting data — Pipeline offline" : !incidentId ? "Select an incident to view correlated vessels." : "No vessels found."}
                          </td>
                        </tr>
                     )}

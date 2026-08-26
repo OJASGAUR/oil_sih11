@@ -7,31 +7,31 @@ import { MapPin, Calendar, Clock, Crosshair, Map, Activity, ShieldAlert, ArrowLe
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
-export default async function AnalysisPage({ params }: { params: { incidentId: string } }) {
-  const incidentRes = await api.incidents.getById(params.incidentId)
+export default async function AnalysisPage({ params }: { params: Promise<{ incidentId: string }> }) {
+  const resolvedParams = await params
+  const incidentRes = await api.incidents.getById(resolvedParams.incidentId)
   
-  if (!incidentRes) {
-    notFound()
-  }
-
-  const isOffline = 'error' in incidentRes
+  const isOffline = incidentRes && 'error' in incidentRes
+  const incident = !isOffline && incidentRes && !('error' in incidentRes) ? incidentRes : null
 
   if (isOffline) {
     return (
-      <div className="flex flex-col gap-6 items-center justify-center min-h-[60vh] text-center">
-        <ServerCrash className="h-16 w-16 text-destructive mb-4" />
-        <h1 className="text-3xl font-bold tracking-tight">Data Unavailable</h1>
-        <p className="text-muted-foreground max-w-md">
-          Unable to fetch analysis for incident <span className="font-mono text-primary">{params.incidentId}</span>. The backend pipeline is currently offline or unreachable.
-        </p>
+      <div className="flex flex-col gap-6">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-6 py-12 rounded-xl flex flex-col items-center justify-center text-center gap-4">
+          <ServerCrash size={48} className="text-destructive/80" />
+          <h2 className="text-2xl font-bold">Pipeline Offline</h2>
+          <p className="max-w-md">
+            Unable to fetch analysis for incident <span className="font-mono text-primary">{resolvedParams.incidentId}</span>. The backend pipeline is currently offline or unreachable.
+          </p>
         <Link href="/">
           <Button variant="outline" className="mt-4 gap-2"><ArrowLeft size={16} /> Return to Dashboard</Button>
         </Link>
       </div>
+      </div>
     )
   }
 
-  const incident = incidentRes
+
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
@@ -42,7 +42,7 @@ export default async function AnalysisPage({ params }: { params: { incidentId: s
     }
   }
 
-  const date = new Date(incident.timestamp || Date.now())
+  const date = new Date(incident.timestamp || 0)
 
   return (
     <div className="flex flex-col gap-6">
