@@ -47,27 +47,27 @@
 }
 
 :root {
-  /* Maritime dark theme as default */
-  --background: #020617; /* slate-950 */
-  --foreground: #f8fafc; /* slate-50 */
+  /* Professional clean light theme */
+  --background: #f8fafc; /* slate-50 for app bg */
+  --foreground: #0f172a; /* slate-900 */
   
-  --card: #0f172a; /* slate-900 */
-  --card-foreground: #f8fafc;
+  --card: #ffffff; /* pure white cards */
+  --card-foreground: #0f172a;
   
-  --popover: #0f172a;
-  --popover-foreground: #f8fafc;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
   
-  --primary: #06b6d4; /* cyan-500 */
+  --primary: #2563eb; /* enterprise blue (blue-600) */
   --primary-foreground: #ffffff;
   
-  --secondary: #1e293b; /* slate-800 */
-  --secondary-foreground: #f8fafc;
+  --secondary: #f1f5f9; /* slate-100 */
+  --secondary-foreground: #0f172a;
   
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8; /* slate-400 */
+  --muted: #f1f5f9; /* slate-100 */
+  --muted-foreground: #64748b; /* slate-500 */
   
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
   
   --destructive: #ef4444; /* red-500 */
   --destructive-foreground: #ffffff;
@@ -81,9 +81,9 @@
   --warning: #f59e0b; /* amber-500 */
   --warning-foreground: #ffffff;
 
-  --border: #1e293b;
-  --input: #1e293b;
-  --ring: #06b6d4;
+  --border: #e2e8f0; /* slate-200 */
+  --input: #e2e8f0;
+  --ring: #2563eb;
   
   --radius: 0.5rem;
 }
@@ -97,29 +97,30 @@
   }
 }
 
-/* Leaflet dark mode overrides */
+/* Leaflet clean light mode overrides */
 .leaflet-container {
-  background: #020617 !important;
+  background: #f1f5f9 !important;
   font-family: inherit !important;
 }
 
 .leaflet-control-zoom a {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
-  border-color: #1e293b !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: #1e293b !important;
+  background-color: #f1f5f9 !important;
 }
 
 .leaflet-popup-content-wrapper {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
-  border: 1px solid #1e293b !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
   border-radius: 0.5rem !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
 }
 
 .leaflet-popup-tip {
-  background-color: #0f172a !important;
+  background-color: #ffffff !important;
 }

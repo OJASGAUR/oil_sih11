@@ -56,13 +56,17 @@ export default function DetectionPage() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       setFile(e.target.files[0])
+      
+      // Auto-set acquisition time to time of upload (current local time)
+      const now = new Date()
+      const formattedTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16)
+      setTimestamp(formattedTime)
     }
   }
 
-  const handleUseDemo = () => {
-    const demoFile = new File(["demo"], "S1A_IW_GRDH_1SDV_20260825_ArabianSea.tif", { type: "image/tiff" })
-    setFile(demoFile)
-  }
+
 
   const runDetection = async () => {
     if (!file) return
@@ -120,10 +124,7 @@ export default function DetectionPage() {
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-primary">AI Oil Spill Detection</h1>
-        <p className="text-muted-foreground mt-1">
-          Analyze satellite imagery using OpenCV + DeepSea AI hybrid pipeline.
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight text-primary">Oil Spill Detection</h1>
       </div>
 
       {/* ── IDLE / UPLOAD STATE ────────────────────────────── */}
@@ -153,9 +154,8 @@ export default function DetectionPage() {
                   </div>
                   <input type="file" className="hidden" accept="image/*,.tif,.tiff" onChange={handleFileSelect} />
                 </label>
-                <div className="flex gap-4 mt-4">
-                  <Button variant="outline" onClick={handleUseDemo}>Select Placeholder Scene</Button>
-                  <Button disabled={!file} onClick={runDetection} className="gap-2">
+                <div className="flex mt-4">
+                  <Button disabled={!file} onClick={runDetection} className="gap-2 w-full">
                     <Play size={16} /> Run Detection
                   </Button>
                 </div>
@@ -168,12 +168,7 @@ export default function DetectionPage() {
                 <CardTitle className="flex items-center gap-2"><Settings size={18} /> Model Configuration</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Pipeline</p>
-                  <p className="font-semibold text-sm">DeepSea Vision AI + OpenCV</p>
-                  <Badge variant="ai" className="mt-1">Hybrid AI</Badge>
-                </div>
-                <div className="pt-4 border-t border-border">
+                <div>
                   <div className="flex justify-between mb-1">
                     <p className="text-sm font-medium">Detection Threshold</p>
                     <p className="text-sm text-muted-foreground font-mono">{threshold}</p>
@@ -278,87 +273,39 @@ export default function DetectionPage() {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="flex flex-col gap-6">
             {/* Image Viewer with Tabs */}
-            <div className="lg:col-span-2">
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><Eye size={18} /> Visual Analysis</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="overlay">
-                    <TabsList className="mb-4">
-                      <TabsTrigger value="original">Original</TabsTrigger>
-                      <TabsTrigger value="overlay">Detection Overlay</TabsTrigger>
-                      <TabsTrigger value="mask">Binary Mask</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="original" className="relative aspect-[4/3] bg-black rounded-lg overflow-hidden border border-border">
-                      <img src={`data:image/png;base64,${result.cvResult.originalBase64}`} alt="Original SAR Image" className="w-full h-full object-contain" />
-                      <Badge className="absolute top-4 left-4 bg-black/70 text-white border-none">Original SAR Scene</Badge>
-                    </TabsContent>
-                    <TabsContent value="overlay" className="relative aspect-[4/3] bg-black rounded-lg overflow-hidden border border-border">
-                      <img src={`data:image/png;base64,${result.cvResult.overlayBase64}`} alt="Detection Overlay" className="w-full h-full object-contain" />
-                      <div className="absolute top-4 left-4 flex gap-2">
-                        <Badge variant="ai">OpenCV Detection Overlay</Badge>
-                      </div>
-                    </TabsContent>
-                    <TabsContent value="mask" className="relative aspect-[4/3] bg-black rounded-lg overflow-hidden border border-border">
-                      <img src={`data:image/png;base64,${result.cvResult.maskBase64}`} alt="Binary Mask" className="w-full h-full object-contain" />
-                      <Badge className="absolute top-4 left-4 bg-black/70 text-white border-none">Segmentation Mask</Badge>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* AI Analysis Panel */}
-            <div className="space-y-4">
-              <Card className="border-primary/30">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2"><Brain size={18} /> DeepSea AI Analysis</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 text-sm">
-                  <div>
-                    <p className="text-muted-foreground flex items-center gap-1 mb-1"><ShieldAlert size={14} /> Characteristics</p>
-                    <p>{result.aiAnalysis.characteristics || "N/A"}</p>
-                  </div>
-                  <div className="border-t border-border pt-3">
-                    <p className="text-muted-foreground flex items-center gap-1 mb-1"><MapPin size={14} /> Likely Source</p>
-                    <p className="font-semibold">{result.aiAnalysis.likelySource || "Unknown"}</p>
-                  </div>
-                  <div className="border-t border-border pt-3">
-                    <p className="text-muted-foreground flex items-center gap-1 mb-1"><BarChart3 size={14} /> Estimated Area</p>
-                    <p>{result.aiAnalysis.estimatedArea || "N/A"}</p>
-                  </div>
-                  <div className="border-t border-border pt-3">
-                    <p className="text-muted-foreground flex items-center gap-1 mb-1"><Wind size={14} /> Sea Conditions</p>
-                    <p>{result.aiAnalysis.windSeaConditions || "N/A"}</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-primary/5 border-primary/20">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">Recommended Action</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm">{result.aiAnalysis.recommendedAction || "No recommendation available"}</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="pt-4 space-y-2 text-xs text-muted-foreground">
-                  <div className="flex justify-between"><span>Sample ID</span><span className="font-mono">{result.sampleId}</span></div>
-                  <div className="flex justify-between"><span>Model</span><span>{result.modelName}</span></div>
-                  <div className="flex justify-between"><span>Version</span><span>{result.modelVersion}</span></div>
-                  <div className="flex justify-between"><span>Image Size</span><span>{result.cvResult.imageWidth}×{result.cvResult.imageHeight}px</span></div>
-                </CardContent>
-              </Card>
-
-              <Button className="w-full" variant="outline" onClick={() => { setFile(null); setStatus("IDLE"); setResult(null) }}>
-                Analyze Another Scene
-              </Button>
-            </div>
+            <Card className="h-full">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="flex items-center gap-2"><Eye size={18} /> Visual Analysis</CardTitle>
+                <Button variant="outline" size="sm" onClick={() => { setFile(null); setStatus("IDLE"); setResult(null) }}>
+                  Analyze Another Scene
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="overlay">
+                  <TabsList className="mb-4">
+                    <TabsTrigger value="original">Original</TabsTrigger>
+                    <TabsTrigger value="overlay">Detection Overlay</TabsTrigger>
+                    <TabsTrigger value="mask">Binary Mask</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="original" className="relative aspect-[21/9] bg-black rounded-lg overflow-hidden border border-border">
+                    <img src={`data:image/png;base64,${result.cvResult.originalBase64}`} alt="Original SAR Image" className="w-full h-full object-contain" />
+                    <Badge className="absolute top-4 left-4 bg-black/70 text-white border-none">Original SAR Scene</Badge>
+                  </TabsContent>
+                  <TabsContent value="overlay" className="relative aspect-[21/9] bg-black rounded-lg overflow-hidden border border-border">
+                    <img src={`data:image/png;base64,${result.cvResult.overlayBase64}`} alt="Detection Overlay" className="w-full h-full object-contain" />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <Badge variant="ai">OpenCV Detection Overlay</Badge>
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="mask" className="relative aspect-[21/9] bg-black rounded-lg overflow-hidden border border-border">
+                    <img src={`data:image/png;base64,${result.cvResult.maskBase64}`} alt="Binary Mask" className="w-full h-full object-contain" />
+                    <Badge className="absolute top-4 left-4 bg-black/70 text-white border-none">Segmentation Mask</Badge>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
           </div>
         </div>
       )}

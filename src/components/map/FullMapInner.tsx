@@ -59,8 +59,10 @@ export default function FullMapInner({ incidents, vessels, trajectory }: FullMap
         zoomControl={true}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
+          attribution='&copy; <a href="https://www.esri.com/">Esri</a> &mdash; Marine features from GEBCO, NOAA, and Garmin'
+          maxNativeZoom={9}
+          maxZoom={18}
         />
         
         {/* Incidents */}
@@ -120,7 +122,7 @@ export default function FullMapInner({ incidents, vessels, trajectory }: FullMap
       </MapContainer>
 
       {/* Map Legend overlay */}
-      <div className="absolute bottom-6 right-6 z-10 bg-black/80 backdrop-blur border border-border p-4 rounded-lg shadow-lg">
+      <div className="absolute bottom-6 right-6 z-10 bg-background/90 backdrop-blur border border-border p-4 rounded-lg shadow-lg">
         <h4 className="text-sm font-semibold mb-3 border-b border-border/50 pb-2">Legend</h4>
         <div className="space-y-2 text-xs">
           <div className="flex items-center gap-2">

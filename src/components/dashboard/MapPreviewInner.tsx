@@ -40,7 +40,9 @@ export default function MapPreviewInner({ incidents }: { incidents: Incident[] }
       attributionControl={false}
     >
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
+        maxNativeZoom={9}
+        maxZoom={18}
       />
       {incidents.map((incident) => (
         <Marker 
