@@ -7,51 +7,24 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
+import { useDetection } from "@/lib/contexts/DetectionContext"
+import { DetectionResponse } from "@/data/types"
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
 
-interface DetectionResponse {
-  sampleId: string
-  predictionAvailable: boolean
-  confidence: number
-  spillAreaKm2: number
-  modelName: string
-  modelVersion: string
-  cvResult: {
-    overlayBase64: string
-    maskBase64: string
-    originalBase64: string
-    contoursCount: number
-    coveragePercent: number
-    darkPixels: number
-    imageWidth: number
-    imageHeight: number
-    overlayUrl: string
-    maskUrl: string
-  }
-  aiAnalysis: {
-    spillDetected: boolean | null
-    severity: string
-    characteristics: string
-    likelySource: string
-    recommendedAction: string
-    windSeaConditions: string
-    estimatedArea: string
-  }
-}
-
 export default function DetectionPage() {
-  const [file, setFile] = useState<File | null>(null)
-  const [status, setStatus] = useState<"IDLE" | "PROCESSING" | "RESULT" | "ERROR">("IDLE")
-  const [progressMsg, setProgressMsg] = useState("")
-  const [progressValue, setProgressValue] = useState(0)
-  const [result, setResult] = useState<DetectionResponse | null>(null)
-  const [errorMsg, setErrorMsg] = useState("")
-  const [threshold, setThreshold] = useState("0.50")
-  
-  // Metadata overrides for the demo
-  const [lat, setLat] = useState("15.42")
-  const [lon, setLon] = useState("67.83")
-  const [timestamp, setTimestamp] = useState(new Date().toISOString().slice(0, 16))
+  const {
+    file, setFile,
+    status, setStatus,
+    progressMsg, setProgressMsg,
+    progressValue, setProgressValue,
+    result, setResult,
+    errorMsg, setErrorMsg,
+    threshold, setThreshold,
+    lat, setLat,
+    lon, setLon,
+    timestamp, setTimestamp
+  } = useDetection()
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {

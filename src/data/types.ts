@@ -18,14 +18,34 @@ export interface Incident {
   status: "DETECTED" | "INVESTIGATING" | "RESOLVED"
 }
 
-export interface DetectionInferResult {
+export interface DetectionResponse {
   sampleId: string
   predictionAvailable: boolean
   confidence: number
   spillAreaKm2: number
-  maskUrl: string
   modelName: string
   modelVersion: string
+  cvResult: {
+    overlayBase64: string
+    maskBase64: string
+    originalBase64: string
+    contoursCount: number
+    coveragePercent: number
+    darkPixels: number
+    imageWidth: number
+    imageHeight: number
+    overlayUrl: string
+    maskUrl: string
+  }
+  aiAnalysis: {
+    spillDetected: boolean | null
+    severity: string
+    characteristics: string
+    likelySource: string
+    recommendedAction: string
+    windSeaConditions: string
+    estimatedArea: string
+  }
 }
 
 export interface Vessel {

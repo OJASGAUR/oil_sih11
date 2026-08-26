@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: "AI-assisted maritime surveillance and oil spill detection",
 }
 
+import { DetectionProvider } from "@/lib/contexts/DetectionContext"
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -18,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-background text-foreground antialiased`}>
-        <AppShell>
-          {children}
-        </AppShell>
+        <DetectionProvider>
+          <AppShell>
+            {children}
+          </AppShell>
+        </DetectionProvider>
       </body>
     </html>
   )
